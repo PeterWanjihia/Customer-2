@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1 class="title">Customer Segmentation Application</h1>
+  <h1 class="title">CLV Prediction App</h1>
+  <p class="subtitle">An app that helps solve CLV predictions for banks</p>
+
+  <form class="search-form" method="POST" action="/search">
+    <input type="text" name="client_name" placeholder="Enter client name">
+    <input type="submit" value="Search">
+  </form>
+
+  <table class="table table-sm table-borderless mb-0">
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Address</th>
+      <th>Contacts</th>
+    </tr>
+    {% for client in clients %}
+      <tr>
+        <td>{{ client.name }}</td>
+        <td>{{ client.email }}</td>
+        <td>{{ client.address }}</td>
+        <td>{{ client.contact_info }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+
+  <!-- Adding the pagination Buttons -->
+  <!-- Pagination Links -->
+  <div class="text-right">
+    <a href="{{ url_for('main.index', page=clients.prev_num) }}" class="btn btn-outline-dark {% if clients.page == 1 %}disabled{% endif %}">
+      &laquo;
+    </a>
+    <!-- Loop through the number of pages to display a link for each -->
+    {% for page_num in clients.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+      {% if page_num %}
+        <!-- Check for the active page and set the link to "Active" -->
+        {% if clients.page == page_num %}
+          <a href="{{ url_for('main.index', page=page_num) }}" class="btn btn-dark">
+            {{ page_num }}
+          </a>
+        {% else %}
+          <a href="{{ url_for('main.index', page=page_num) }}" class="btn btn-outline-dark">
+            {{ page_num }}
+          </a>
+        {% endif %}
+      {% else %}
+        ...
+      {% endif %}
+    {% endfor %}
+    <a href="{{ url_for('main.index', page=clients.next_num) }}" class="btn btn-outline-dark {% if clients.page == clients.pages %}disabled{% endif %}">
+      &raquo;
+    </a>
+  </div>
+  <p class="text-right mt-3">
+    Showing page {{ clients.page }} of {{ clients.pages }}
+  </p>
+
+{% endblock %}
